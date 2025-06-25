@@ -30,7 +30,7 @@
     "@iconify-json/lucide": "^1.2.52",
     "bumpp": "latest",
     "prettier": "^3.6.1",
-    "wrangler": "^4.18.0"
+    "wrangler": "^4.21.2"
   },
   "packageManager": "pnpm@10.12.3",
   "engines": {
