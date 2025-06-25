@@ -3,6 +3,8 @@ import type { FormSubmitEvent } from '@nuxt/ui';
 
 import * as z from 'zod';
 
+const store = usePikPakAccounts();
+
 const emit = defineEmits<{ close: [{ account: string; password: string } | undefined] }>();
 
 const schema = z.object({
@@ -18,7 +20,8 @@ const state = reactive<Partial<Schema>>({
 });
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  emit('close', { account: event.data.account, password: event.data.password });
+  const { account, password } = event.data;
+  await store.login(account, password);
 }
 </script>
 

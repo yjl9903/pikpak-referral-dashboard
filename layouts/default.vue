@@ -21,12 +21,8 @@ const menu = computed<NavigationMenuItem[][]>(() => {
     [
       {
         icon: 'i-lucide-plus',
-        async onSelect() {
-          const { result } = await modal.open();
-          const data = await result;
-          if (data) {
-            await store.login(data.account, data.password);
-          }
+        onSelect() {
+          modal.open();
         }
       },
       {

@@ -14,19 +14,25 @@ export interface PikPakAccount {
   deviceId: string;
 }
 
-export const usePikPakAccounts = defineStore('pikpakAccountsStore', () => {
+function loadCache() {
   const cache = !import.meta.env.SSR
     ? JSON.parse(window.localStorage.getItem('pikpak_accounts') ?? 'null')
     : undefined;
+  if (cache) {
+    return cache.filter(Boolean).map((c: any) => new PikPakClient({ account: c.account, token: c }));
+  } else {
+    return [];
+  }
+}
 
-  const accounts = shallowRef<PikPakClient[]>(
-    cache ? cache.map((c: any) => new PikPakClient({ account: c.account, token: c })) : []
-  );
+export const usePikPakAccounts = defineStore('pikpakAccountsStore', () => {
+  const cache = loadCache();
+
+  const accounts = shallowRef<PikPakClient[]>(cache);
 
   const currentAccounts = shallowRef<PikPakClient[]>([...accounts.value]);
 
   !import.meta.env.SSR && watch(accounts, (accounts) => {
-    console.log('watch accounts', accounts);
     window.localStorage.setItem('pikpak_accounts', JSON.stringify(accounts.map((a) => a.token)));
   });
 
@@ -39,12 +45,15 @@ export const usePikPakAccounts = defineStore('pikpakAccountsStore', () => {
         password,
         host: { user: `${location.protocol}//${location.host}/api/` }
       });
-      await client.login();
 
-      const isSelectAll = currentAccounts.value.length === accounts.value.length;
-      accounts.value = [client, ...accounts.value];
-      if (isSelectAll) {
-        currentAccounts.value = [client, ...currentAccounts.value];
+      const resp = await client.login().catch(() => undefined);
+
+      if (resp) {
+        const isSelectAll = currentAccounts.value.length === accounts.value.length;
+        accounts.value = [client, ...accounts.value];
+        if (isSelectAll) {
+          currentAccounts.value = [client, ...currentAccounts.value];
+        }
       }
     }
   };
