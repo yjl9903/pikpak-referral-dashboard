@@ -187,7 +187,7 @@ const yFormatter = (i: number) => i;
       <USkeleton class="h-[96px] w-full" />
     </div>
 
-    <!-- <div v-if="daily">
+    <div v-if="daily">
       <ClientOnly>
         <BarChart
           :key="colorMode.value"
@@ -207,6 +207,6 @@ const yFormatter = (i: number) => i;
     </div>
     <div v-else>
       <USkeleton class="h-[300px] w-full" />
-    </div> -->
+    </div>
   </div>
 </template>
