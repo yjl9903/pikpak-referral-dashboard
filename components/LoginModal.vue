@@ -21,9 +21,12 @@ const state = reactive<Partial<Schema>>({
   password: undefined
 });
 
+const isSumiting = ref(false);
+
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   const { account, password } = event.data;
   try {
+    isSumiting.value = true;
     const resp = await store.login(account, password);
     if (resp) {
       toast.add({
@@ -42,6 +45,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       title: '登录失败',
       color: 'error'
     });
+  } finally {
+    isSumiting.value = false;
   }
 }
 </script>
@@ -58,7 +63,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <UInput v-model="state.password" type="password" />
         </UFormField>
 
-        <UButton type="submit">登录</UButton>
+        <UButton type="submit" loading="isSumiting">登录</UButton>
       </UForm>
     </template>
   </UModal>

@@ -63,7 +63,7 @@ export class PikPakClient {
     this.options = { host: init.host };
   }
 
-  private async request(url: string | URL, init: RequestInit) {
+  private async request<T = any>(url: string | URL, init: RequestInit): Promise<T> {
     const resp = await fetch(url, {
       ...init,
       headers: {
@@ -80,10 +80,10 @@ export class PikPakClient {
       const data = await resp.json();
       if (typeof data?.message === 'string' && data.message.indexOf('token is expired') !== -1) {
         await this.refreshToken();
+        return this.request(url, init);
       }
     }
 
-    console.error(resp);
     throw new Error('请求失败', { cause: resp });
   }
 
