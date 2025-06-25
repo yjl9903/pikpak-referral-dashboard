@@ -38,7 +38,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       toast.add({
         title: '登录失败',
         color: 'error'
-      });  
+      });
     }
   } catch (error) {
     toast.add({
@@ -63,7 +63,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <UInput v-model="state.password" type="password" />
         </UFormField>
 
-        <UButton type="submit" loading="isSumiting">登录</UButton>
+        <UButton type="submit" :loading="isSumiting">登录</UButton>
       </UForm>
     </template>
   </UModal>
