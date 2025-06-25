@@ -188,20 +188,22 @@ const yFormatter = (i: number) => i;
     </div>
 
     <div v-if="daily">
-      <BarChart
-        :key="colorMode.value"
-        :data="daily"
-        :height="300"
-        :categories="categories"
-        :y-axis="yAxis"
-        :xNumTicks="10"
-        :radius="4"
-        :y-grid-line="true"
-        :x-formatter="xFormatter"
-        :y-formatter="yFormatter"
-        :legend-position="LegendPosition.Top"
-        :hide-legend="false"
-      />
+      <ClientOnly>
+        <BarChart
+          :key="colorMode.value"
+          :data="daily"
+          :height="300"
+          :categories="categories"
+          :y-axis="yAxis"
+          :xNumTicks="10"
+          :radius="4"
+          :y-grid-line="true"
+          :x-formatter="xFormatter"
+          :y-formatter="yFormatter"
+          :legend-position="LegendPosition.Top"
+          :hide-legend="false"
+        />
+      </ClientOnly>
     </div>
     <div v-else>
       <USkeleton class="h-[300px] w-full" />
