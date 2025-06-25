@@ -37,7 +37,10 @@ function loadCache(): PikPakClient[] {
 
 function setCache(accounts: PikPakClient[]) {
   if (!import.meta.env.SSR) {
-    window.localStorage.setItem('pikpak_accounts', JSON.stringify(accounts.map((a) => a.token).filter(Boolean)));
+    window.localStorage.setItem(
+      'pikpak_accounts',
+      JSON.stringify(accounts.map((a) => a.token).filter(Boolean))
+    );
   }
 }
 
@@ -48,7 +51,7 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
 
   init.forEach((client) => {
     client.options.onRefreshToken = () => {
-      accounts.value = accounts.value.filter(ac => ac.token);
+      accounts.value = accounts.value.filter((ac) => ac.token);
       setCache(accounts.value);
     };
   });
@@ -62,7 +65,7 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
     accounts: skipHydrate(accounts),
     currentAccounts: skipHydrate(currentAccounts),
     async login(account: string, password: string) {
-      const exist = accounts.value.find(ac => ac.account === account);
+      const exist = accounts.value.find((ac) => ac.account === account);
       if (exist) return exist;
 
       const client = new PikPakClient({

@@ -173,7 +173,7 @@ export class PikPakClient {
 
       try {
         this.options?.onRefreshToken?.();
-      } catch { }
+      } catch {}
 
       return this.token;
     } catch (error) {
@@ -181,7 +181,7 @@ export class PikPakClient {
 
       try {
         this.options?.onRefreshToken?.();
-      } catch { }
+      } catch {}
 
       throw error;
     }

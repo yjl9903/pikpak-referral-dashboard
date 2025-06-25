@@ -5,7 +5,14 @@ export default defineNuxtConfig({
 
   css: ['~/assets/styles/main.css'],
 
-  modules: ['@nuxt/ui', '@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt', 'shadcn-nuxt', 'nuxt-charts'],
+  modules: [
+    '@nuxt/ui',
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt',
+    '@vueuse/nuxt',
+    'shadcn-nuxt',
+    'nuxt-charts'
+  ],
 
   app: {
     head: {
@@ -37,8 +44,7 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: ['pikpak-referral.onekuma.cn']
     },
-    plugins: [
-    ]
+    plugins: []
   },
 
   shadcn: {
