@@ -36,7 +36,9 @@ function loadCache(): PikPakClient[] {
 }
 
 function setCache(accounts: PikPakClient[]) {
-  window.localStorage.setItem('pikpak_accounts', JSON.stringify(accounts.map((a) => a.token).filter(Boolean)));
+  if (!import.meta.env.SSR) {
+    window.localStorage.setItem('pikpak_accounts', JSON.stringify(accounts.map((a) => a.token).filter(Boolean)));
+  }
 }
 
 export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {

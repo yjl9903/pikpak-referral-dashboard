@@ -14,15 +14,17 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
   const { currentAccounts } = toRefs(usePikPakAccounts());
 
   const { data: summary, pending } = useAsyncData('pikpak_comissions_summary', async () => {
-    const summarys = await Promise.all(
-      currentAccounts.value.map((account) => account.getCommissionsSummary())
-    );
-
     const summary: ComissionsSummary = {
       total: 0,
       pending: 0,
       available: 0,
     };
+
+    if (import.meta.env.SSR) return summary;
+
+    const summarys = await Promise.all(
+      currentAccounts.value.map((account) => account.getCommissionsSummary())
+    );
 
     for (const item of summarys) {
       if (item.total) summary.total += item.total;
