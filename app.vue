@@ -21,18 +21,13 @@
   --c-input-selection-bg: #cce2ff;
 }
 
-.main {
-  @apply: mx-auto xl: w-7xl lg: w-4xl md: w-[90vw] lt-md: w-[95vw] lt-md: px-3
-    lt-sm: w-[100vw];
-}
-
-.text-link {
+/* .text-link {
   @apply: text-blue hover: text-blue-600;
 }
 
 .text-link-active {
   @apply: hover: text-blue-600;
-}
+} */
 
 /* selection */
 ::-webkit-selection {
