@@ -67,7 +67,6 @@ export class PikPakClient {
     const resp = await fetch(url, {
       ...init,
       headers: {
-        'User-Agent': 'ANDROID-com.pikcloud.pikpak/1.21.0',
         'Content-Type': 'application/json; charset=utf-8',
         'X-Device-Id': this.deviceId,
         ...(this.token ? { Authorization: `Bearer ${this.token.accessToken}` } : {}),
