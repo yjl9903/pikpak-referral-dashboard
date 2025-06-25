@@ -1,23 +1,24 @@
 <script setup lang="ts">
 import { defineProps, toRefs } from 'vue';
 
-const props = defineProps<{ daily: DailyCommissionStats[] }>();
-const { daily } = toRefs(props);
+const props = defineProps<{
+  daily: DailyCommissionStats[];
+  field: { key: string; name: string; color: string };
+}>();
+
+const { daily, field } = toRefs(props);
 
 const colorMode = useColorMode();
 
 const categories = computed(() => ({
-  paid_amount: {
-    name: '付费金额',
-    color: '#4777f6'
-  },
-  paid_amount_commission: {
-    name: '佣金金额',
-    color: '#63d1be'
+  [field.value.key]: {
+    name: field.value.name,
+    color: field.value.color
   }
 }));
 
-const yAxis = ['paid_amount', 'paid_amount_commission'];
+// const yAxis = ['paid_amount', 'paid_amount_commission'];
+const yAxis = computed(() => [field.value.key]);
 
 const xFormatter = (i: number): string => {
   return `${daily.value[i]?.day}`;

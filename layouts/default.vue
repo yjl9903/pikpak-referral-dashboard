@@ -60,7 +60,7 @@ const ui = {
         ></UNavigationMenu>
       </ClientOnly>
     </header>
-    <main class="px-12 pt-8">
+    <main class="px-12 pt-8 pb-20">
       <slot />
     </main>
   </div>

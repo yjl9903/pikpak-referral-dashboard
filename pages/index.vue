@@ -3,7 +3,7 @@ import { usePikPakComissionsSummary } from '~/stores/comissions';
 
 const cardUI = {
   root: 'shadow-xs',
-  body: 'px-2 py-1 sm:p-4 space-y-2'
+  body: '!px-4 !py-3 space-y-1'
 };
 
 const summary = usePikPakComissionsSummary();
@@ -23,7 +23,11 @@ const thirtyDaysAgoStr = formatDate(thirtyDaysAgo);
 
 const range = ref<{ from: string; to: string[] }>({ from: thirtyDaysAgoStr, to: todayStr });
 
-const { data: daily, pending: dailyPending, refresh: refreshDaily } = useAsyncData('pikpak_comissions_daily', async () => {
+const {
+  data: daily,
+  pending: dailyPending,
+  refresh: refreshDaily
+} = useAsyncData('pikpak_comissions_daily', async () => {
   const daily = await Promise.all(
     currentAccounts.value.map((account) => account.getCommissionsDaily({ ...range.value }))
   );
@@ -83,8 +87,11 @@ const dailySummary = computed(() => {
 </script>
 
 <template>
-  <div v-if="currentAccounts.length > 0" class="space-y-8">
-    <div v-if="!summary.pending" class="grid grid-cols-4 gap-4 *:bg-gradient-to-t">
+  <div v-if="currentAccounts.length > 0" class="">
+    <div class="">
+      <h2 class="text-2xl font-bold">总览</h2>
+    </div>
+    <div v-if="!summary.pending" class="mt-4 grid grid-cols-4 gap-4 *:bg-gradient-to-t">
       <UCard :ui="cardUI">
         <div>
           <span class="text-muted-foreground text-sm">总收益</span>
@@ -121,7 +128,7 @@ const dailySummary = computed(() => {
       <USkeleton class="h-[96px] w-full" />
     </div>
 
-    <div v-if="daily" class="grid grid-cols-4 gap-4 *:bg-gradient-to-t">
+    <div v-if="daily" class="mt-4 grid grid-cols-4 gap-4 *:bg-gradient-to-t">
       <UCard :ui="cardUI">
         <div>
           <span class="text-muted-foreground text-sm">最近 30 天收益</span>
@@ -168,14 +175,46 @@ const dailySummary = computed(() => {
       <div></div>
     </div>
     <div v-else>
-      <USkeleton class="h-[96px] w-full" />
+      <USkeleton class="mt-4 h-[96px] w-full" />
     </div>
 
-    <div v-if="daily">
-      <DailyChart :daily="daily"></DailyChart>
+    <div class="mt-8">
+      <h2 class="text-2xl font-bold">收益情况</h2>
+    </div>
+    <div v-if="daily" class="mt-4">
+      <DailyChart
+        :daily="daily"
+        :field="{ key: 'paid_amount_commission', name: '佣金金额', color: '#ee8448' }"
+      ></DailyChart>
     </div>
     <div v-else>
-      <USkeleton class="h-[300px] w-full" />
+      <USkeleton class="mt-4 h-[300px] w-full" />
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-2xl font-bold">付费人数</h2>
+    </div>
+    <div v-if="daily" class="mt-4">
+      <DailyChart
+        :daily="daily"
+        :field="{ key: 'paid_users', name: '付费人数', color: '#63d1be' }"
+      ></DailyChart>
+    </div>
+    <div v-else>
+      <USkeleton class="mt-4 h-[300px] w-full" />
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-2xl font-bold">新增用户数</h2>
+    </div>
+    <div v-if="daily" class="mt-4">
+      <DailyChart
+        :daily="daily"
+        :field="{ key: 'new_users', name: '新增用户数', color: '#406df6' }"
+      ></DailyChart>
+    </div>
+    <div v-else>
+      <USkeleton class="mt-4 h-[300px] w-full" />
     </div>
   </div>
 </template>
