@@ -15,7 +15,7 @@ const menu = computed<NavigationMenuItem[][]>(() => {
   return [
     [
       {
-        label: 'PikPak 推广计划 Pro'
+        label: 'PikPak 引荐计划 Pro'
       }
     ],
     [
@@ -35,7 +35,7 @@ const menu = computed<NavigationMenuItem[][]>(() => {
         children: store.accounts.map((account) => {
           return {
             label: account.account,
-            class: 'w-[144px] text-truncate'
+            class: 'w-[224px] text-truncate'
           };
         })
       }
@@ -44,7 +44,7 @@ const menu = computed<NavigationMenuItem[][]>(() => {
 });
 
 const ui = {
-  viewportWrapper: 'absolute top-full left-[calc(100%-48px-120px)] flex w-[160px]'
+  // viewportWrapper: 'absolute top-full left-[calc(100%-48px-240px)] flex w-[240px]',
 };
 </script>
 
@@ -55,6 +55,7 @@ const ui = {
         <UNavigationMenu
           :items="menu"
           :ui="ui"
+          content-orientation="vertical"
           class="border-b border-default w-full px-12"
         ></UNavigationMenu>
       </ClientOnly>

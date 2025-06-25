@@ -7,5 +7,5 @@ export default defineEventHandler((event) => {
   req.headers.set('user-agent', 'ANDROID-com.pikcloud.pikpak/1.21.0');
 
   const pathname = url.pathname.slice('/api'.length);
-  return fetch(`https://user.mypikpak.com${pathname}${url.search}`, req);
+  return fetch(`https://api-drive.mypikpak.com${pathname}${url.search}`, req);
 });

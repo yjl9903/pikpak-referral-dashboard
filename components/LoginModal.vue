@@ -5,6 +5,8 @@ import * as z from 'zod';
 
 const store = usePikPakAccounts();
 
+const toast = useToast();
+
 const emit = defineEmits<{ close: [{ account: string; password: string } | undefined] }>();
 
 const schema = z.object({
@@ -21,7 +23,26 @@ const state = reactive<Partial<Schema>>({
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   const { account, password } = event.data;
-  await store.login(account, password);
+  try {
+    const resp = await store.login(account, password);
+    if (resp) {
+      toast.add({
+        title: '登录成功',
+        color: 'success'
+      });
+      emit('close', undefined);
+    } else {
+      toast.add({
+        title: '登录失败',
+        color: 'error'
+      });  
+    }
+  } catch (error) {
+    toast.add({
+      title: '登录失败',
+      color: 'error'
+    });
+  }
 }
 </script>
 
