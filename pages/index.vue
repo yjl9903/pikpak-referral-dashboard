@@ -99,7 +99,7 @@ const yFormatter = (i: number) => i;
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div v-if="currentAccounts.length > 0" class="space-y-8">
     <div v-if="!summary.pending" class="grid grid-cols-4 gap-4 *:bg-gradient-to-t">
       <UCard :ui="cardUI">
         <div>
