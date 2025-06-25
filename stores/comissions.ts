@@ -13,7 +13,7 @@ interface ComissionsSummary {
 export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummaryStore', () => {
   const { currentAccounts } = toRefs(usePikPakAccounts());
 
-  const { data: summary, pending } = useAsyncData('pikpak_comissions_summary', async () => {
+  const { data: summary, pending, refresh } = useAsyncData('pikpak_comissions_summary', async () => {
     const summary: ComissionsSummary = {
       total: 0,
       pending: 0,
@@ -33,6 +33,10 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
     }
 
     return summary;
+  });
+
+  watch(currentAccounts, () => {
+    refresh();
   });
 
   return {

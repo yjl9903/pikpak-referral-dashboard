@@ -23,7 +23,7 @@ const thirtyDaysAgoStr = formatDate(thirtyDaysAgo);
 
 const range = ref<{ from: string; to: string[] }>({ from: thirtyDaysAgoStr, to: todayStr });
 
-const { data: daily, pending: dailyPending } = useAsyncData('pikpak_comissions_daily', async () => {
+const { data: daily, pending: dailyPending, refresh: refreshDaily } = useAsyncData('pikpak_comissions_daily', async () => {
   const daily = await Promise.all(
     currentAccounts.value.map((account) => account.getCommissionsDaily({ ...range.value }))
   );
@@ -55,6 +55,10 @@ const { data: daily, pending: dailyPending } = useAsyncData('pikpak_comissions_d
 
     return [...acc.values()].sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
   }
+});
+
+watch(currentAccounts, () => {
+  refreshDaily();
 });
 
 const dailySummary = computed(() => {
