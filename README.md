@@ -1,75 +1,10 @@
-# Nuxt Minimal Starter
+# PikPak 引荐计划 Pro 数据看板
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+[![CI](https://github.com/yjl9903/pikpak-referral/actions/workflows/ci.yml/badge.svg)](https://github.com/yjl9903/pikpak-referral/actions/workflows/ci.yml)
+[![Deploy Cloudflare Worker](https://github.com/yjl9903/pikpak-referral/actions/workflows/deploy.yml/badge.svg)](https://github.com/yjl9903/pikpak-referral/actions/workflows/deploy.yml)
 
-## Setup
+试一试 → [看板](https://pikpak-referral.onekuma.cn/)
 
-Make sure to install dependencies:
+## License
 
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+MIT License © [2025] [XLor](https://github.com/yjl9903)
