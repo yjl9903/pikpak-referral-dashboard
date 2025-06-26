@@ -3,10 +3,14 @@ import { defineProps, toRefs } from 'vue';
 
 import type { DailyCommissionStats } from '~/utils/pikpak';
 
-const props = defineProps<{
-  daily: DailyCommissionStats[];
-  field: { key: keyof DailyCommissionStats; name: string; color: string };
-}>();
+const props = withDefaults(
+  defineProps<{
+    loading?: boolean;
+    daily: DailyCommissionStats[] | undefined | null;
+    field: { key: keyof DailyCommissionStats; name: string; color: string };
+  }>(),
+  { loading: false }
+);
 
 const { daily, field } = toRefs(props);
 
@@ -22,27 +26,35 @@ const categories = computed(() => ({
 // const yAxis = ['paid_amount', 'paid_amount_commission'];
 const yAxis = computed(() => [field.value.key]);
 
+const isInteger = computed(
+  () => field.value.key === 'new_users' || field.value.key === 'paid_users'
+);
+
 const xFormatter = (i: number): string => {
-  return `${daily.value[i]?.day}`;
+  return `${daily.value?.[i]?.day}`;
 };
 const yFormatter = (i: number) => {
-  return i.toFixed(2);
+  return isInteger.value ? Math.round(i) + '' : i.toFixed(2);
 };
 </script>
 
 <template>
-  <BarChart
-    :key="colorMode.value"
-    :data="daily"
-    :height="300"
-    :categories="categories"
-    :y-axis="yAxis"
-    :xNumTicks="10"
-    :radius="4"
-    :y-grid-line="true"
-    :x-formatter="xFormatter"
-    :y-formatter="yFormatter"
-    :legend-position="LegendPosition.Top"
-    :hide-legend="false"
-  />
+  <div>
+    <BarChart
+      v-if="!loading && daily"
+      :key="colorMode.value"
+      :data="daily"
+      :height="300"
+      :categories="categories"
+      :y-axis="yAxis"
+      :xNumTicks="10"
+      :radius="4"
+      :y-grid-line="true"
+      :x-formatter="xFormatter"
+      :y-formatter="yFormatter"
+      :legend-position="LegendPosition.Top"
+      :hide-legend="false"
+    />
+    <USkeleton v-else-if="loading" class="h-[300px] w-full" />
+  </div>
 </template>

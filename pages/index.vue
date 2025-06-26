@@ -129,8 +129,8 @@ const dailySummary = computed(() => {
 
       <div></div>
     </div>
-    <div v-else>
-      <USkeleton class="h-[96px] w-full" />
+    <div v-else class="mt-4">
+      <USkeleton class="h-[84px] w-full" />
     </div>
 
     <div v-if="daily" class="mt-4 grid grid-cols-4 gap-4 *:bg-gradient-to-t">
@@ -179,47 +179,38 @@ const dailySummary = computed(() => {
 
       <div></div>
     </div>
-    <div v-else>
-      <USkeleton class="mt-4 h-[96px] w-full" />
+    <div v-else class="mt-4">
+      <USkeleton class="h-[84px] w-full" />
     </div>
 
     <div class="mt-8">
       <h2 class="text-2xl font-bold">收益情况</h2>
     </div>
-    <div v-if="daily" class="mt-4">
-      <DailyChart
-        :daily="daily"
-        :field="{ key: 'paid_amount_commission', name: '佣金金额', color: '#ee8448' }"
-      ></DailyChart>
-    </div>
-    <div v-else>
-      <USkeleton class="mt-4 h-[300px] w-full" />
-    </div>
+    <DailyChart
+      class="mt-4"
+      :loading="dailyPending"
+      :daily="daily"
+      :field="{ key: 'paid_amount_commission', name: '佣金金额', color: '#ee8448' }"
+    ></DailyChart>
 
     <div class="mt-8">
       <h2 class="text-2xl font-bold">付费人数</h2>
     </div>
-    <div v-if="daily" class="mt-4">
-      <DailyChart
-        :daily="daily"
-        :field="{ key: 'paid_users', name: '付费人数', color: '#63d1be' }"
-      ></DailyChart>
-    </div>
-    <div v-else>
-      <USkeleton class="mt-4 h-[300px] w-full" />
-    </div>
+    <DailyChart
+      class="mt-4"
+      :loading="dailyPending"
+      :daily="daily"
+      :field="{ key: 'paid_users', name: '付费人数', color: '#63d1be' }"
+    ></DailyChart>
 
     <div class="mt-8">
       <h2 class="text-2xl font-bold">新增用户数</h2>
     </div>
-    <div v-if="daily" class="mt-4">
-      <DailyChart
-        :daily="daily"
-        :field="{ key: 'new_users', name: '新增用户数', color: '#406df6' }"
-      ></DailyChart>
-    </div>
-    <div v-else>
-      <USkeleton class="mt-4 h-[300px] w-full" />
-    </div>
+    <DailyChart
+      class="mt-4"
+      :loading="dailyPending"
+      :daily="daily"
+      :field="{ key: 'new_users', name: '新增用户数', color: '#406df6' }"
+    ></DailyChart>
   </div>
 </template>
