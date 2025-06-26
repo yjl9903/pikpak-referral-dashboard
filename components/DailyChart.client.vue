@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { defineProps, toRefs } from 'vue';
 
+import type { DailyCommissionStats } from '~/utils/pikpak';
+
 const props = defineProps<{
   daily: DailyCommissionStats[];
-  field: { key: string; name: string; color: string };
+  field: { key: keyof DailyCommissionStats; name: string; color: string };
 }>();
 
 const { daily, field } = toRefs(props);
@@ -23,7 +25,9 @@ const yAxis = computed(() => [field.value.key]);
 const xFormatter = (i: number): string => {
   return `${daily.value[i]?.day}`;
 };
-const yFormatter = (i: number) => i;
+const yFormatter = (i: number) => {
+  return i.toFixed(2);
+};
 </script>
 
 <template>
