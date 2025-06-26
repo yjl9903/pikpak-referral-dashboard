@@ -7,4 +7,4 @@
 
 ## License
 
-MIT License © [2025] [XLor](https://github.com/yjl9903)
+MIT License © 2025 [XLor](https://github.com/yjl9903)
