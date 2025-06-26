@@ -50,7 +50,7 @@ const ui = {
 
 <template>
   <div>
-    <header>
+    <header class="fixed w-full bg-white z-100">
       <ClientOnly>
         <UNavigationMenu
           :items="menu"
@@ -60,7 +60,7 @@ const ui = {
         ></UNavigationMenu>
       </ClientOnly>
     </header>
-    <main class="px-12 pt-8 pb-20">
+    <main class="px-12 pt-20 pb-20">
       <slot />
     </main>
   </div>

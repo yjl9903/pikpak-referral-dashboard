@@ -31,10 +31,10 @@ const isInteger = computed(
 );
 
 const xFormatter = (i: number): string => {
-  return `${daily.value?.[i]?.day}`;
+  return `${daily.value?.[i]?.day ?? ''}`;
 };
-const yFormatter = (i: number) => {
-  return isInteger.value ? Math.round(i) + '' : i.toFixed(2);
+const yFormatter = (v: number) => {
+  return isInteger.value ? Math.round(v) + '' : v.toFixed(2);
 };
 </script>
 
@@ -47,13 +47,14 @@ const yFormatter = (i: number) => {
       :height="300"
       :categories="categories"
       :y-axis="yAxis"
-      :xNumTicks="10"
+      :xNumTicks="Math.min(daily.length, 10)"
+      :yNumTicks="5"
       :radius="4"
       :y-grid-line="true"
       :x-formatter="xFormatter"
       :y-formatter="yFormatter"
       :legend-position="LegendPosition.Top"
-      :hide-legend="false"
+      :hide-legend="true"
     />
     <USkeleton v-else-if="loading" class="h-[300px] w-full" />
   </div>
