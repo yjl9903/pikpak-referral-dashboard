@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui';
 
-import LoginModal from '~/components/LoginModal';
+import LoginModal from '~/components/LoginModal.vue';
 
 const store = usePikPakAccounts();
 

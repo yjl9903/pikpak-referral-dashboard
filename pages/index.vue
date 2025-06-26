@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DailyCommissionStats } from '~/utils/pikpak';
+
 import { usePikPakComissionsSummary } from '~/stores/comissions';
 
 const cardUI = {
@@ -21,7 +23,7 @@ thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 const todayStr = formatDate(today);
 const thirtyDaysAgoStr = formatDate(thirtyDaysAgo);
 
-const range = ref<{ from: string; to: string[] }>({ from: thirtyDaysAgoStr, to: todayStr });
+const range = ref<{ from: string; to: string }>({ from: thirtyDaysAgoStr, to: todayStr });
 
 const {
   data: daily,
@@ -91,7 +93,10 @@ const dailySummary = computed(() => {
     <div class="">
       <h2 class="text-2xl font-bold">总览</h2>
     </div>
-    <div v-if="!summary.pending" class="mt-4 grid grid-cols-4 gap-4 *:bg-gradient-to-t">
+    <div
+      v-if="!summary.pending && summary.summary"
+      class="mt-4 grid grid-cols-4 gap-4 *:bg-gradient-to-t"
+    >
       <UCard :ui="cardUI">
         <div>
           <span class="text-muted-foreground text-sm">总收益</span>
