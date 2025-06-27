@@ -39,7 +39,7 @@
     "bumpp": "latest",
     "prettier": "^3.6.1",
     "shadcn-vue": "^2.2.0",
-    "wrangler": "^4.21.2"
+    "wrangler": "^4.22.0"
   },
   "packageManager": "pnpm@10.12.4",
   "engines": {
