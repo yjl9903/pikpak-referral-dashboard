@@ -37,7 +37,7 @@
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.52",
     "bumpp": "latest",
-    "prettier": "^3.6.1",
+    "prettier": "^3.6.2",
     "shadcn-vue": "^2.2.0",
     "wrangler": "^4.22.0"
   },
