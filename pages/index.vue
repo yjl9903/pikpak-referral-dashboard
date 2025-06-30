@@ -132,7 +132,7 @@ const selectedFilter = computed({
         />
       </div>
     </div>
-    <div v-if="daily" class="mt-4 grid grid-cols-4 gap-8 *:bg-gradient-to-t">
+    <div v-if="!dailyPending && daily" class="mt-4 grid grid-cols-4 gap-8 *:bg-gradient-to-t">
       <UCard :ui="cardUI">
         <div>
           <span class="text-muted-foreground text-sm">最近 30 天收益</span>
