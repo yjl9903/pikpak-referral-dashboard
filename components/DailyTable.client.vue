@@ -20,7 +20,7 @@ const data = computed(() => {
   );
 
   return [
-    ...(props.daily ?? []).reverse(),
+    ...[...(props.daily ?? [])].reverse(),
     { day: '总计', new_users, paid_users, paid_amount, paid_amount_commission }
   ];
 });
