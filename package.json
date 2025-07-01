@@ -35,7 +35,7 @@
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.53",
+    "@iconify-json/lucide": "^1.2.54",
     "bumpp": "latest",
     "prettier": "^3.6.2",
     "shadcn-vue": "^2.2.0",
