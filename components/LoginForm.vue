@@ -62,5 +62,20 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </UFormField>
 
     <UButton type="submit" color="success" :loading="isSumiting">登录</UButton>
+
+    <div class="text-xs text-gray-500 p-3 bg-gray-50 rounded-md">
+      <div class="flex items-start space-x-2">
+        <UIcon name="i-heroicons-shield-check" class="w-4 h-4 text-green-500 flex-shrink-0" />
+        <div>
+          <p class="font-medium text-gray-700 mb-1">数据安全提醒</p>
+          <p class="text-gray-600 leading-relaxed">
+            您的登录信息将经过本站的<span class="font-bold">代理服务器</span>, 我们<span
+              class="font-bold"
+              >承诺不收集您的任何敏感信息</span
+            >, 请妥善保管您的登录信息.
+          </p>
+        </div>
+      </div>
+    </div>
   </UForm>
 </template>

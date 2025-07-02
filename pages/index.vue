@@ -240,6 +240,7 @@ const selectedFilter = computed({
   <div v-else>
     <div class="mt-12 flex justify-center">
       <div class="w-[400px]">
+        <div class="text-2xl font-bold mb-4">登录 PikPak 账号</div>
         <LoginForm></LoginForm>
       </div>
     </div>
