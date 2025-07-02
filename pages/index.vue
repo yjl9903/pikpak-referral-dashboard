@@ -148,7 +148,7 @@ const selectedFilter = computed({
       </UCard>
     </div>
     <div v-else class="mt-4">
-      <USkeleton class="h-[84px] w-full" />
+      <USkeleton class="h-[112px] max-lg:h-[256px] w-full" />
     </div>
 
     <div class="mt-12 flex items-center gap-8 max-sm:justify-between">
@@ -199,7 +199,7 @@ const selectedFilter = computed({
       </UCard>
     </div>
     <div v-else class="mt-4">
-      <USkeleton class="h-[84px] w-full" />
+      <USkeleton class="h-[84px] max-lg:h-[200px] w-full" />
     </div>
 
     <div class="mt-6">
