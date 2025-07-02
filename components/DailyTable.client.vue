@@ -10,6 +10,8 @@ const props = withDefaults(
   { loading: false }
 );
 
+const exchange = useCurrencyStore();
+
 const data = computed(() => {
   const new_users = (props.daily ?? []).reduce((acc, cur) => acc + cur.new_users, 0);
   const paid_users = (props.daily ?? []).reduce((acc, cur) => acc + cur.paid_users, 0);
@@ -56,10 +58,12 @@ const columns: TableColumn<DailyCommissionStats>[] = [
       <span v-else>{{ row.original.day }}</span>
     </template>
     <template #paid_amount-cell="{ row }">
-      <span>{{ row.original.paid_amount.toFixed(2) }} SGD</span>
+      <span>{{ exchange.formatAmount(row.original.paid_amount) }}</span>
+      <span>&nbsp;{{ exchange.currentCurrency.code }}</span>
     </template>
     <template #paid_amount_commission-cell="{ row }">
-      <span>{{ row.original.paid_amount_commission.toFixed(2) }} SGD</span>
+      <span>{{ exchange.formatAmount(row.original.paid_amount_commission) }}</span>
+      <span>&nbsp;{{ exchange.currentCurrency.code }}</span>
     </template>
   </UTable>
   <USkeleton v-else-if="loading" class="h-[300px] w-full" />

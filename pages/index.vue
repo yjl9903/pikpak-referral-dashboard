@@ -2,6 +2,7 @@
 import type { SelectItem } from '@nuxt/ui';
 
 import { usePikPakComissionsSummary, usePikPakComissionsDaily } from '~/stores/comissions';
+import { useCurrencyStore } from '~/stores/currency';
 
 const cardUI = {
   root: 'shadow-xs',
@@ -11,9 +12,12 @@ const cardUI = {
 const { currentAccounts } = storeToRefs(usePikPakAccounts());
 
 const summary = usePikPakComissionsSummary();
+const exchange = useCurrencyStore();
+
+await exchange.init();
 
 const dailyStore = usePikPakComissionsDaily();
-const { daily, dailySummary, filters, range, pending: dailyPending } = storeToRefs(dailyStore);
+const { daily, dailySummary, range, pending: dailyPending } = storeToRefs(dailyStore);
 
 const rangeFilters = computed(() => {
   const filters = dailyStore.filters;
@@ -77,8 +81,8 @@ const selectedFilter = computed({
 </script>
 
 <template>
-  <div v-if="currentAccounts.length > 0" class="">
-    <div class="">
+  <div v-if="currentAccounts.length > 0">
+    <div>
       <h2 class="text-2xl font-bold">总览</h2>
     </div>
     <div
@@ -90,8 +94,8 @@ const selectedFilter = computed({
           <span class="text-muted-foreground text-sm">总收益</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
-          <span>{{ summary.summary.total.toFixed(2) }}</span>
-          <span class="text-base"> SGD</span>
+          <span>{{ exchange.formatAmount(summary.summary.total) }}</span>
+          <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
         </div>
       </UCard>
 
@@ -100,8 +104,11 @@ const selectedFilter = computed({
           <span class="text-muted-foreground text-sm">待处理收益</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
-          <span>{{ summary.summary.pending.toFixed(2) }}</span>
-          <span class="text-base"> SGD</span>
+          <span>{{ exchange.formatAmount(summary.summary.pending) }}</span>
+          <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
+          <span v-if="exchange.currentCurrency.code !== 'SGD'" class="text-base ml-2 text-gray-400"
+            >({{ summary.summary.pending }} SGD)</span
+          >
         </div>
       </UCard>
 
@@ -110,8 +117,11 @@ const selectedFilter = computed({
           <span class="text-muted-foreground text-sm">可提现收益</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
-          <span>{{ summary.summary.available.toFixed(2) }}</span>
-          <span class="text-base"> SGD</span>
+          <span>{{ exchange.formatAmount(summary.summary.available) }}</span>
+          <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
+          <span v-if="exchange.currentCurrency.code !== 'SGD'" class="text-base ml-2 text-gray-400"
+            >({{ summary.summary.available }} SGD)</span
+          >
         </div>
       </UCard>
 
@@ -148,11 +158,11 @@ const selectedFilter = computed({
           <span class="text-muted-foreground text-sm">最近 30 天收益</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
-          <span>{{ dailySummary.paid_amount_commission.toFixed(2) }}</span>
-          <span class="text-base"> SGD</span>
+          <span>{{ exchange.formatAmount(dailySummary.paid_amount_commission) }}</span>
+          <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
           <span class="text-base"> / </span>
-          <span class="text-base">{{ dailySummary.paid_amount.toFixed(2) }}</span>
-          <span class="text-base"> SGD</span>
+          <span class="text-base">{{ exchange.formatAmount(dailySummary.paid_amount) }}</span>
+          <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
         </div>
       </UCard>
 
@@ -162,7 +172,6 @@ const selectedFilter = computed({
         </div>
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ dailySummary.paid_users }}</span>
-          <!-- <span class="text-base"> SGD</span> -->
         </div>
       </UCard>
 
@@ -172,7 +181,6 @@ const selectedFilter = computed({
         </div>
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ dailySummary.new_users }}</span>
-          <!-- <span class="text-base"> SGD</span> -->
         </div>
       </UCard>
     </div>
@@ -214,5 +222,12 @@ const selectedFilter = computed({
       <h2 class="text-xl font-bold">完整数据</h2>
     </div>
     <DailyTable class="mt-4" :loading="dailyPending" :daily="daily"></DailyTable>
+  </div>
+  <div v-else>
+    <div class="mt-12 flex justify-center">
+      <div class="w-[400px]">
+        <LoginForm></LoginForm>
+      </div>
+    </div>
   </div>
 </template>

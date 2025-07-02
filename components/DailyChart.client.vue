@@ -14,6 +14,8 @@ const props = withDefaults(
 
 const { daily, field } = toRefs(props);
 
+const exchange = useCurrencyStore();
+
 const colorMode = useColorMode();
 
 const categories = computed(() => ({
@@ -26,15 +28,16 @@ const categories = computed(() => ({
 // const yAxis = ['paid_amount', 'paid_amount_commission'];
 const yAxis = computed(() => [field.value.key]);
 
-const isInteger = computed(
-  () => field.value.key === 'new_users' || field.value.key === 'paid_users'
-);
+const isCount = computed(() => field.value.key === 'new_users' || field.value.key === 'paid_users');
 
 const xFormatter = (i: number): string => {
   return `${daily.value?.[i]?.day ?? ''}`;
 };
+
 const yFormatter = (v: number) => {
-  return isInteger.value ? Math.round(v) + '' : v.toFixed(2);
+  return isCount.value
+    ? Math.round(v) + ''
+    : `${exchange.formatAmount(v)} ${exchange.currentCurrency.code}`;
 };
 </script>
 
