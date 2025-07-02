@@ -60,11 +60,12 @@ const selectOneAccount = (idx: number) => {
             </div>
           </template>
           <template #account-content>
-            <div v-if="store.accounts.length > 0" class="px-2 py-2">
+            <div v-if="store.accounts.length > 1" class="px-2 py-2">
               <div
                 class="flex items-center px-2 py-1 select-none cursor-pointer rounded-md hover:bg-muted"
               >
                 <UCheckbox
+                  v-if="store.accounts.length > 1"
                   :ui="checkboxUI"
                   :modelValue="store.currentAccounts.length === store.accounts.length"
                   @update:model-value="store.selectAllAccounts()"
