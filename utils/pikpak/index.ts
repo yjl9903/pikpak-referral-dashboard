@@ -1,4 +1,4 @@
-import type { DailyCommissionStats, RevenueSummary } from './types';
+import type { DailyCommissionStats, InvitedRewardSummary, RevenueSummary } from './types';
 
 export * from './types';
 
@@ -213,6 +213,12 @@ export class PikPakClient {
     const url = new URL('promoting/v1/commissions/summary', this.options.host?.api ?? API_HOST);
     const resp = await this.request(url, {});
     return resp as RevenueSummary;
+  }
+
+  async getInvitedRewardSummary() {
+    const url = new URL('promoting/v1/invited-reward/summary', this.options.host?.api ?? API_HOST);
+    const resp = await this.request(url, {});
+    return resp as InvitedRewardSummary;
   }
 
   async getCommissionsDaily(options?: { from?: string; to?: string; user_id?: string }) {

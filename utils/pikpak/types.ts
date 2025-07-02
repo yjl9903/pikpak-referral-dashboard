@@ -50,6 +50,13 @@ export interface RevenueSummary {
   display_custom_admin?: boolean;
 }
 
+export interface InvitedRewardSummary {
+  total: number;
+  totalPaidNums: number;
+  totalRecommend: number;
+  yesterday: number;
+}
+
 export interface DailyCommissionStats {
   /** 統計日期 (yyyy-MM-dd) */
   day: string;

@@ -115,7 +115,16 @@ const selectedFilter = computed({
         </div>
       </UCard>
 
-      <div></div>
+      <UCard :ui="cardUI">
+        <div>
+          <span class="text-muted-foreground text-sm">付费 / 引荐总人数</span>
+        </div>
+        <div class="text-2xl font-semibold tabular-nums">
+          <span>{{ summary.summary.totalPaidNums }}</span>
+          <span class="text-base"> / </span>
+          <span class="text-base">{{ summary.summary.totalRecommend }}</span>
+        </div>
+      </UCard>
     </div>
     <div v-else class="mt-4">
       <USkeleton class="h-[84px] w-full" />
@@ -125,6 +134,7 @@ const selectedFilter = computed({
       <h2 class="text-2xl font-bold">收益情况</h2>
       <div>
         <USelect
+          v-if="!dailyPending && daily"
           v-model="selectedFilter"
           :items="rangeFilters"
           class="w-48"
@@ -132,7 +142,7 @@ const selectedFilter = computed({
         />
       </div>
     </div>
-    <div v-if="!dailyPending && daily" class="mt-4 grid grid-cols-4 gap-8 *:bg-gradient-to-t">
+    <div v-if="!dailyPending && daily" class="mt-4 grid grid-cols-3 gap-8 *:bg-gradient-to-t">
       <UCard :ui="cardUI">
         <div>
           <span class="text-muted-foreground text-sm">最近 30 天收益</span>

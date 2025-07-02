@@ -6,12 +6,16 @@ import { generatePredefinedFilterDates } from '~/utils/date';
 
 import { usePikPakAccounts } from './accounts';
 
-interface ComissionsSummary {
+interface ReferralSummary {
   total: number;
 
   pending: number;
 
   available: number;
+
+  totalPaidNums: number;
+
+  totalRecommend: number;
 }
 
 export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummaryStore', () => {
@@ -27,6 +31,7 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
     const summarys = await Promise.all(
       accounts.value.map(async (account) => ({
         account,
+        invited: await account.getInvitedRewardSummary(),
         summary: await account.getCommissionsSummary()
       }))
     );
@@ -39,10 +44,12 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
   });
 
   const summary = computed(() => {
-    const summary: ComissionsSummary = {
+    const summary: ReferralSummary = {
       total: 0,
       pending: 0,
-      available: 0
+      available: 0,
+      totalPaidNums: 0,
+      totalRecommend: 0
     };
 
     if (!allSummarys.value) return summary;
@@ -55,6 +62,8 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
       if (item.summary.total) summary.total += item.summary.total;
       if (item.summary.pending) summary.pending += item.summary.pending;
       if (item.summary.available) summary.available += item.summary.available;
+      if (item.invited.totalPaidNums) summary.totalPaidNums += item.invited.totalPaidNums;
+      if (item.invited.totalRecommend) summary.totalRecommend += item.invited.totalRecommend;
     }
 
     return summary;
@@ -103,7 +112,6 @@ export const usePikPakComissionsDaily = defineStore('PikpakComissionsDailyStore'
         .map((item) => item.daily) ?? [];
 
     const merged = mergeDailyCommissionStats(...data);
-
     return merged;
   });
 
@@ -141,7 +149,7 @@ export const usePikPakComissionsDaily = defineStore('PikpakComissionsDailyStore'
 function mergeDailyCommissionStats(
   ...groups: readonly DailyCommissionStats[][]
 ): DailyCommissionStats[] {
-  if (groups.length <= 1) return groups[0] ?? [];
+  if (groups.length <= 1) return [...(groups[0] ?? [])].sort((a, b) => a.day.localeCompare(b.day));
 
   const acc = new Map<string, DailyCommissionStats>();
 
@@ -159,5 +167,5 @@ function mergeDailyCommissionStats(
     }
   }
 
-  return [...acc.values()].sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+  return [...acc.values()].sort((a, b) => a.day.localeCompare(b.day));
 }
