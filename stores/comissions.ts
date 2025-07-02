@@ -1,6 +1,6 @@
 import { defineStore, skipHydrate } from 'pinia';
 
-import type { DailyCommissionStats } from '~/utils/pikpak';
+import type { DailyCommissionStats, PikPakClient } from '~/utils/pikpak';
 
 import { generatePredefinedFilterDates } from '~/utils/date';
 
@@ -19,7 +19,7 @@ interface ReferralSummary {
 }
 
 export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummaryStore', () => {
-  const { accounts, currentAccounts } = toRefs(usePikPakAccounts());
+  const { accounts, currentAccounts } = storeToRefs(usePikPakAccounts());
 
   const {
     data: allSummarys,
@@ -78,10 +78,50 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
     return summary;
   });
 
+  const allLastMonths = ref<Array<{ account: PikPakClient; daily: DailyCommissionStats[] }>>();
+
+  const lastMonth = computed(() => {
+    if (!allLastMonths.value) return undefined;
+    if (currentAccounts.value.length !== 1) return undefined;
+
+    const found = allLastMonths.value.find((item) =>
+      currentAccounts.value.find((a) => a.account === item.account.account)
+    );
+    if (!found) return undefined;
+
+    // 计算从哪一天开始的总收益 + 当前可提现收益 >= 100 SGD
+    const targetAmount = 100; // 目标金额 100 SGD
+    const currentAvailable = summary.value.available; // 当前可提现收益
+
+    // 需要从历史数据中累积的金额
+    const neededFromHistory = targetAmount - currentAvailable;
+
+    // 从最新的数据开始往前累积，找到达到目标金额的日期
+    let accumulatedAmount = 0;
+    let targetReachedDay: Date | null = null;
+    for (const item of [...found.daily].sort((a, b) => a.day.localeCompare(b.day))) {
+      accumulatedAmount += item.paid_amount_commission || 0;
+      if (accumulatedAmount >= neededFromHistory) {
+        const targetDate = new Date(item.day);
+        targetDate.setDate(targetDate.getDate() + 31);
+        targetReachedDay = targetDate;
+        break;
+      }
+    }
+
+    return {
+      daily: found.daily,
+      reached: currentAvailable >= targetAmount,
+      targetReachedDay
+    };
+  });
+
   return {
     pending: skipHydrate(pending),
     summary: skipHydrate(summary),
+    lastMonth: skipHydrate(lastMonth),
     allSummarys: skipHydrate(allSummarys),
+    allLastMonths: skipHydrate(allLastMonths),
     refresh
   };
 });
@@ -90,19 +130,27 @@ export const usePikPakComissionsDaily = defineStore('PikpakComissionsDailyStore'
   const filters = generatePredefinedFilterDates();
   const range = ref<[string, string]>(filters.last30Days);
 
-  const { accounts, currentAccounts } = toRefs(usePikPakAccounts());
+  const { accounts, currentAccounts } = storeToRefs(usePikPakAccounts());
+  const { allLastMonths } = storeToRefs(usePikPakComissionsSummary());
 
   const {
     data: allDaily,
     pending,
     refresh
   } = useAsyncData('pikpak_comissions_daily', async () => {
+    const from = range.value[0];
+    const to = range.value[1];
+
     const daily = await Promise.all(
       accounts.value.map(async (account) => ({
         account,
-        daily: await account.getCommissionsDaily({ from: range.value[0], to: range.value[1] })
+        daily: await account.getCommissionsDaily({ from, to })
       }))
     );
+
+    if (filters.last30Days[0] === from && filters.last30Days[1] === to) {
+      allLastMonths.value = [...daily];
+    }
 
     return daily;
   });

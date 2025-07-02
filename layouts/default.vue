@@ -35,7 +35,7 @@ const menu = computed<NavigationMenuItem[][]>(() => {
           : isSelectAll
             ? `所有账号`
             : `${store.currentAccounts[0].account}`,
-        class: 'w-[200px]',
+        class: 'w-[200px] max-sm:w-[120px]',
         slot: 'account'
       }
     ]
@@ -54,7 +54,7 @@ const selectOneAccount = (idx: number) => {
         <UNavigationMenu
           :items="menu"
           content-orientation="vertical"
-          class="border-b border-default w-full px-12"
+          class="border-b border-default w-full px-12 max-sm:px-4"
         >
           <template #account-content>
             <div v-if="store.accounts.length > 0" class="px-2 py-2">
@@ -95,7 +95,7 @@ const selectOneAccount = (idx: number) => {
       </ClientOnly>
     </header>
 
-    <main class="px-12 pt-20 pb-20">
+    <main class="px-12 max-sm:px-4 pt-20 pb-20">
       <slot />
     </main>
   </div>

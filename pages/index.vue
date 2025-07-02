@@ -87,7 +87,7 @@ const selectedFilter = computed({
     </div>
     <div
       v-if="!summary.pending && summary.summary"
-      class="mt-4 grid grid-cols-4 gap-8 *:bg-gradient-to-t"
+      class="mt-4 grid grid-cols-4 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-8 *:bg-gradient-to-t"
     >
       <UCard :ui="cardUI">
         <div>
@@ -96,6 +96,9 @@ const selectedFilter = computed({
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ exchange.formatAmount(summary.summary.total) }}</span>
           <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
+        </div>
+        <div v-if="exchange.currentCurrency.code !== 'SGD'">
+          <span class="text-sm text-gray-400">{{ summary.summary.total }} SGD</span>
         </div>
       </UCard>
 
@@ -106,9 +109,9 @@ const selectedFilter = computed({
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ exchange.formatAmount(summary.summary.pending) }}</span>
           <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
-          <span v-if="exchange.currentCurrency.code !== 'SGD'" class="text-base ml-2 text-gray-400"
-            >({{ summary.summary.pending }} SGD)</span
-          >
+        </div>
+        <div v-if="exchange.currentCurrency.code !== 'SGD'">
+          <span class="text-sm text-gray-400">{{ summary.summary.pending }} SGD</span>
         </div>
       </UCard>
 
@@ -119,9 +122,17 @@ const selectedFilter = computed({
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ exchange.formatAmount(summary.summary.available) }}</span>
           <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
-          <span v-if="exchange.currentCurrency.code !== 'SGD'" class="text-base ml-2 text-gray-400"
-            >({{ summary.summary.available }} SGD)</span
-          >
+        </div>
+        <div v-if="exchange.currentCurrency.code !== 'SGD'">
+          <span class="text-sm text-gray-400">{{ summary.summary.available }} SGD</span>
+          <span v-if="summary.lastMonth" class="text-sm text-gray-400 ml-2">
+            <span v-if="summary.lastMonth.reached" class="text-green-500">可提现</span>
+            <span v-else-if="summary.lastMonth.targetReachedDay" class="text-blue-500"
+              >预计 {{ summary.lastMonth.targetReachedDay.getMonth() + 1 }} 月
+              {{ summary.lastMonth.targetReachedDay.getDate() }} 日可提现</span
+            >
+            <span v-else class="text-yellow-500">30 天内不可提现</span>
+          </span>
         </div>
       </UCard>
 
@@ -140,19 +151,22 @@ const selectedFilter = computed({
       <USkeleton class="h-[84px] w-full" />
     </div>
 
-    <div class="mt-12 flex items-center gap-8">
-      <h2 class="text-2xl font-bold">收益情况</h2>
+    <div class="mt-12 flex items-center gap-8 max-sm:justify-between">
+      <h2 class="text-2xl font-bold shrink-0">收益情况</h2>
       <div>
         <USelect
           v-if="!dailyPending && daily"
           v-model="selectedFilter"
           :items="rangeFilters"
-          class="w-48"
+          class="w-48 max-sm:w-32"
           :ui="{ content: 'max-h-100' }"
         />
       </div>
     </div>
-    <div v-if="!dailyPending && daily" class="mt-4 grid grid-cols-3 gap-8 *:bg-gradient-to-t">
+    <div
+      v-if="!dailyPending && daily"
+      class="mt-4 grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-8 *:bg-gradient-to-t"
+    >
       <UCard :ui="cardUI">
         <div>
           <span class="text-muted-foreground text-sm">最近 30 天收益</span>

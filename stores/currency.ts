@@ -9,7 +9,7 @@ interface CurrencyState {
   error: string | null;
 }
 
-export const useCurrencyStore = defineStore('currency', () => {
+export const useCurrencyStore = defineStore('CurrencyStore', () => {
   const exchangeRateClient = new ExchangeRateClient();
 
   // 状态
