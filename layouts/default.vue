@@ -17,11 +17,7 @@ const menu = computed<NavigationMenuItem[][]>(() => {
   const isSelectAll = store.accounts.length === store.currentAccounts.length;
 
   return [
-    [
-      {
-        label: 'PikPak 引荐计划 Pro'
-      }
-    ],
+    [],
     [
       {
         icon: 'i-lucide-plus',
@@ -54,8 +50,15 @@ const selectOneAccount = (idx: number) => {
         <UNavigationMenu
           :items="menu"
           content-orientation="vertical"
-          class="border-b border-default w-full px-12 max-sm:px-4"
+          class="border-b border-default w-full px-24 max-sm:px-4"
         >
+          <template #list-leading>
+            <div class="flex items-center gap-2 select-none">
+              <img src="/favicon.svg" alt="PikPak" class="w-5 h-5 max-sm:w-4 max-sm:h-4" />
+              <span class="text-lg max-sm:text-base font-bold">PikPak 引荐计划 Pro</span>
+              <span class="text-lg max-sm:hidden font-bold">收益看板</span>
+            </div>
+          </template>
           <template #account-content>
             <div v-if="store.accounts.length > 0" class="px-2 py-2">
               <div
@@ -95,7 +98,7 @@ const selectOneAccount = (idx: number) => {
       </ClientOnly>
     </header>
 
-    <main class="px-12 max-sm:px-4 pt-20 pb-20">
+    <main class="px-24 max-sm:px-4 pt-20 pb-20">
       <slot />
     </main>
   </div>
