@@ -16,12 +16,14 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'PikPak 引荐计划 Pro',
+      title: 'PikPak 引荐计划 Pro 收益看板',
       viewport: 'width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover',
       htmlAttrs: {
         lang: 'zh-CN'
       },
-      link: [],
+      link: [
+        { rel: 'icon', href: '/favicon.svg' }
+      ],
       meta: [],
       script: []
     }
