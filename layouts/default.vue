@@ -59,8 +59,8 @@ const selectOneAccount = (idx: number) => {
               <span class="text-lg max-sm:hidden font-bold">收益看板</span>
             </div>
           </template>
-          <template #account-content>
-            <div v-if="store.accounts.length > 1" class="px-2 py-2">
+          <template v-if="store.accounts.length > 1" #account-content>
+            <div class="px-2 py-2">
               <div
                 class="flex items-center px-2 py-1 select-none cursor-pointer rounded-md hover:bg-muted"
               >
