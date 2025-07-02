@@ -29,11 +29,20 @@ export const usePikPakComissionsSummary = defineStore('PikpakComissionsSummarySt
     if (import.meta.env.SSR) return undefined;
 
     const summarys = await Promise.all(
-      accounts.value.map(async (account) => ({
-        account,
-        invited: await account.getInvitedRewardSummary(),
-        summary: await account.getCommissionsSummary()
-      }))
+      accounts.value.map(async (account) => {
+        const [info, invited, summary] = await Promise.all([
+          account.getUserInfo(),
+          account.getInvitedRewardSummary(),
+          account.getCommissionsSummary()
+        ]);
+
+        return {
+          account,
+          info,
+          invited,
+          summary
+        };
+      })
     );
 
     return summarys;

@@ -61,9 +61,34 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
       setCache(accounts);
     });
 
+  const isCurrentAccount = ref<boolean[]>(
+    accounts.value.map((ac) => currentAccounts.value.some((t) => t.account === ac.account))
+  );
+
+  watch(
+    () => accounts.value,
+    (newValue) => {
+      isCurrentAccount.value = newValue.map((ac) =>
+        currentAccounts.value.some((t) => t.account === ac.account)
+      );
+    }
+  );
+
   return {
     accounts: skipHydrate(accounts),
     currentAccounts: skipHydrate(currentAccounts),
+    isCurrentAccount: skipHydrate(isCurrentAccount),
+    selectAllAccounts() {
+      isCurrentAccount.value = accounts.value.map((ac) => true);
+      currentAccounts.value = [...accounts.value];
+    },
+    selectOneAccount(idx: number) {
+      for (let i = 0; i < isCurrentAccount.value.length; i++) {
+        isCurrentAccount.value[i] = false;
+      }
+      isCurrentAccount.value[idx] = true;
+      currentAccounts.value = accounts.value.filter((_, index) => isCurrentAccount.value[index]);
+    },
     async login(account: string, password: string) {
       const exist = accounts.value.find((ac) => ac.account === account);
       if (exist) return exist;

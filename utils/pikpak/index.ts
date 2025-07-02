@@ -1,4 +1,9 @@
-import type { DailyCommissionStats, InvitedRewardSummary, RevenueSummary } from './types';
+import type {
+  DailyCommissionStats,
+  InvitedRewardSummary,
+  PikPakUserInfo,
+  RevenueSummary
+} from './types';
 
 export * from './types';
 
@@ -207,6 +212,12 @@ export class PikPakClient {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getUserInfo() {
+    const url = new URL('v1/user/me', this.options.host?.user ?? USER_HOST);
+    const resp = await this.request(url, {});
+    return resp as PikPakUserInfo;
   }
 
   async getCommissionsSummary() {

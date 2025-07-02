@@ -69,3 +69,51 @@ export interface DailyCommissionStats {
   /** 佣金金額 (SGD) */
   paid_amount_commission: number;
 }
+
+/**
+ * 用户提供商信息
+ */
+export interface UserProvider {
+  /** 提供商ID (如: google.com, telegram.com) */
+  id: string;
+  /** 提供商用户ID */
+  provider_user_id: string;
+  /** 在该提供商平台的用户名 */
+  name: string;
+}
+
+/**
+ * 用户状态
+ */
+export type UserStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+
+/**
+ * 密码状态
+ */
+export type PasswordStatus = 'SET' | 'UNSET';
+
+/**
+ * PikPak 用户信息
+ */
+export interface PikPakUserInfo {
+  /** 用户唯一标识 */
+  sub: string;
+  /** 用户名 */
+  name: string;
+  /** 用户头像URL */
+  picture: string;
+  /** 用户邮箱 */
+  email: string;
+  /** 用户电话号码 */
+  phone_number: string;
+  /** 用户关联的第三方登录提供商 */
+  providers: UserProvider[];
+  /** 密码设置状态 */
+  password: PasswordStatus;
+  /** 用户状态 */
+  status: UserStatus;
+  /** 账户创建时间 */
+  created_at: string;
+  /** 密码最后更新时间 */
+  password_updated_at: string;
+}

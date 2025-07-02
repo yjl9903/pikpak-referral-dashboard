@@ -8,6 +8,10 @@ const store = usePikPakAccounts();
 const overlay = useOverlay();
 const modal = overlay.create(LoginModal);
 
+const checkboxUI = {
+  base: 'cursor-pointer rounded-sm ring ring-inset ring-accented overflow-hidden focus-visible:outline-2 focus-visible:outline-offset-2'
+};
+
 const menu = computed<NavigationMenuItem[][]>(() => {
   const isNoAccount = store.currentAccounts.length === 0;
   const isSelectAll = store.accounts.length === store.currentAccounts.length;
@@ -31,20 +35,15 @@ const menu = computed<NavigationMenuItem[][]>(() => {
           : isSelectAll
             ? `所有账号`
             : `${store.currentAccounts[0].account}`,
-        class: 'w-[120px] text-truncate',
-        children: store.accounts.map((account) => {
-          return {
-            label: account.account,
-            class: 'w-[224px] text-truncate'
-          };
-        })
+        class: 'w-[200px]',
+        slot: 'account'
       }
     ]
   ];
 });
 
-const ui = {
-  // viewportWrapper: 'absolute top-full left-[calc(100%-48px-240px)] flex w-[240px]',
+const selectOneAccount = (idx: number) => {
+  store.selectOneAccount(idx);
 };
 </script>
 
@@ -54,12 +53,48 @@ const ui = {
       <ClientOnly>
         <UNavigationMenu
           :items="menu"
-          :ui="ui"
           content-orientation="vertical"
           class="border-b border-default w-full px-12"
-        ></UNavigationMenu>
+        >
+          <template #account-content>
+            <div v-if="store.accounts.length > 0" class="px-2 py-2">
+              <div
+                class="flex items-center px-2 py-1 select-none cursor-pointer rounded-md hover:bg-muted"
+              >
+                <UCheckbox
+                  :ui="checkboxUI"
+                  :modelValue="store.currentAccounts.length === store.accounts.length"
+                  @update:model-value="store.selectAllAccounts()"
+                >
+                  <template #label>
+                    <div class="w-[194px] truncate cursor-pointer">所有账号</div>
+                  </template>
+                </UCheckbox>
+              </div>
+              <div
+                v-for="(account, idx) in store.accounts"
+                :key="account.account"
+                class="flex items-center px-2 py-1 select-none cursor-pointer rounded-md hover:bg-muted"
+              >
+                <UCheckbox
+                  :ui="checkboxUI"
+                  :modelValue="
+                    store.isCurrentAccount[idx] &&
+                    store.currentAccounts.length !== store.accounts.length
+                  "
+                  @update:model-value="selectOneAccount(idx)"
+                >
+                  <template #label>
+                    <div class="w-[194px] truncate cursor-pointer">{{ account.account }}</div>
+                  </template>
+                </UCheckbox>
+              </div>
+            </div>
+          </template>
+        </UNavigationMenu>
       </ClientOnly>
     </header>
+
     <main class="px-12 pt-20 pb-20">
       <slot />
     </main>
