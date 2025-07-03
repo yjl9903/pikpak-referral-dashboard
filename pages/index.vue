@@ -98,7 +98,7 @@ const selectedFilter = computed({
           <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
         </div>
         <div v-if="exchange.currentCurrency.code !== 'SGD'">
-          <span class="text-sm text-gray-400">{{ summary.summary.total }} SGD</span>
+          <span class="text-sm text-gray-400">{{ summary.summary.total.toFixed(2) }} SGD</span>
         </div>
       </UCard>
 
@@ -111,7 +111,7 @@ const selectedFilter = computed({
           <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
         </div>
         <div v-if="exchange.currentCurrency.code !== 'SGD'">
-          <span class="text-sm text-gray-400">{{ summary.summary.pending }} SGD</span>
+          <span class="text-sm text-gray-400">{{ summary.summary.pending.toFixed(2) }} SGD</span>
         </div>
       </UCard>
 
@@ -124,7 +124,7 @@ const selectedFilter = computed({
           <span class="text-base">&nbsp;{{ exchange.currentCurrency.code }}</span>
         </div>
         <div v-if="exchange.currentCurrency.code !== 'SGD'">
-          <span class="text-sm text-gray-400">{{ summary.summary.available }} SGD</span>
+          <span class="text-sm text-gray-400">{{ summary.summary.available.toFixed(2) }} SGD</span>
           <span v-if="summary.lastMonth" class="text-sm text-gray-400 ml-2">
             <span v-if="summary.lastMonth.reached" class="text-green-500">可提现</span>
             <span v-else-if="summary.lastMonth.targetReachedDay" class="text-blue-500"
