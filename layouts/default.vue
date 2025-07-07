@@ -46,7 +46,7 @@ const selectOneAccount = (idx: number) => {
 
 <template>
   <div>
-    <header class="fixed w-full bg-white z-100">
+    <header class="fixed w-screen bg-white z-100">
       <ClientOnly>
         <UNavigationMenu
           :items="menu"
