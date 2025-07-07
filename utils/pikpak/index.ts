@@ -49,6 +49,12 @@ export interface PikPakToken {
   expires: number;
 }
 
+export interface PikPakFetchOptions {
+  headers?: Record<string, string>;
+
+  signal?: AbortSignal;
+}
+
 export class PikPakClient {
   public readonly account: string;
 
@@ -75,7 +81,7 @@ export class PikPakClient {
         'Content-Type': 'application/json; charset=utf-8',
         'X-Device-Id': this.deviceId,
         ...(this.token ? { Authorization: `Bearer ${this.token.accessToken}` } : {}),
-        ...init.headers
+        ...(init.headers ?? {})
       }
     });
 
@@ -84,7 +90,7 @@ export class PikPakClient {
     } else if (resp.status === 401) {
       const data = await resp.json();
       if (typeof data?.message === 'string' && data.message.indexOf('token is expired') !== -1) {
-        await this.refreshToken();
+        await this.refreshToken({ signal: init.signal ?? undefined });
         return this.request(url, init);
       }
     }
@@ -92,7 +98,7 @@ export class PikPakClient {
     throw new Error('请求失败', { cause: resp });
   }
 
-  async login() {
+  async login(options?: PikPakFetchOptions) {
     if (!this.password) throw new Error('没有密码');
 
     const url = new URL('v1/auth/signin', this.options.host?.user ?? USER_HOST);
@@ -116,6 +122,7 @@ export class PikPakClient {
         expires_in: number;
         sub: string;
       } = await this.request(url, {
+        ...options,
         method: 'POST',
         body: JSON.stringify(body)
       });
@@ -135,15 +142,15 @@ export class PikPakClient {
     }
   }
 
-  async checkAccessToken() {
+  async checkAccessToken(options?: PikPakFetchOptions) {
     if (!this.token) return undefined;
     if (new Date().getTime() / 1000 > this.token.expires - 60 * 30) {
-      return await this.refreshToken();
+      return await this.refreshToken(options);
     }
     return this.token;
   }
 
-  async refreshToken() {
+  async refreshToken(options?: PikPakFetchOptions) {
     if (!this.token) throw new Error('没有 Token');
 
     const url = new URL('v1/auth/token', this.options.host?.user ?? USER_HOST);
@@ -163,6 +170,7 @@ export class PikPakClient {
         expires_in: number;
         sub: string;
       } = await this.request(url, {
+        ...options,
         method: 'POST',
         body: JSON.stringify(body)
       });
@@ -192,7 +200,7 @@ export class PikPakClient {
     }
   }
 
-  async getCaptchaToken() {
+  async getCaptchaToken(options?: PikPakFetchOptions) {
     const url = new URL('v1/shield/captcha/init', this.options.host?.user ?? USER_HOST);
     const body = {
       client_id: CLIENT_ID,
@@ -205,6 +213,7 @@ export class PikPakClient {
 
     try {
       const resp = await this.request(url, {
+        ...options,
         method: 'POST',
         body: JSON.stringify(body)
       });
@@ -214,25 +223,27 @@ export class PikPakClient {
     }
   }
 
-  async getUserInfo() {
+  async getUserInfo(options?: PikPakFetchOptions) {
     const url = new URL('v1/user/me', this.options.host?.user ?? USER_HOST);
-    const resp = await this.request(url, {});
+    const resp = await this.request(url, { ...options });
     return resp as PikPakUserInfo;
   }
 
-  async getCommissionsSummary() {
+  async getCommissionsSummary(options?: PikPakFetchOptions) {
     const url = new URL('promoting/v1/commissions/summary', this.options.host?.api ?? API_HOST);
-    const resp = await this.request(url, {});
+    const resp = await this.request(url, { ...options });
     return resp as RevenueSummary;
   }
 
-  async getInvitedRewardSummary() {
+  async getInvitedRewardSummary(options?: PikPakFetchOptions) {
     const url = new URL('promoting/v1/invited-reward/summary', this.options.host?.api ?? API_HOST);
-    const resp = await this.request(url, {});
+    const resp = await this.request(url, { ...options });
     return resp as InvitedRewardSummary;
   }
 
-  async getCommissionsDaily(options?: { from?: string; to?: string; user_id?: string }) {
+  async getCommissionsDaily(
+    options?: { from?: string; to?: string; user_id?: string } & PikPakFetchOptions
+  ) {
     const params = new URLSearchParams();
     if (options?.from) {
       params.set('from', options.from);
@@ -248,13 +259,13 @@ export class PikPakClient {
       'promoting/v1/commissions/daily?' + params.toString(),
       this.options.host?.api ?? API_HOST
     );
-    const resp = await this.request(url, {});
+    const resp = await this.request(url, { headers: options?.headers, signal: options?.signal });
     return resp.C0 as DailyCommissionStats[];
   }
 
-  async getRedemptions() {
+  async getRedemptions(options?: PikPakFetchOptions) {
     const url = new URL('promoting/v1/redemptions', this.options.host?.api ?? API_HOST);
-    const resp = await this.request(url, {});
+    const resp = await this.request(url, { ...options });
     return resp;
   }
 }

@@ -14,7 +14,8 @@ const checkboxUI = {
 
 const menu = computed<NavigationMenuItem[][]>(() => {
   const isNoAccount = store.currentAccounts.length === 0;
-  const isSelectAll = store.accounts.length === store.currentAccounts.length;
+  const isSelectAll =
+    store.accounts.length === store.currentAccounts.length && store.currentAccounts.length > 1;
 
   return [
     [],

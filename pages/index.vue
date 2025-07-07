@@ -9,7 +9,7 @@ const cardUI = {
   body: '!px-4 !py-3 space-y-1'
 };
 
-const { currentAccounts } = storeToRefs(usePikPakAccounts());
+const { accounts, currentAccounts } = storeToRefs(usePikPakAccounts());
 
 const summary = usePikPakComissionsSummary();
 const exchange = useCurrencyStore();
@@ -86,7 +86,12 @@ const selectedFilter = computed({
       <h2 class="text-2xl font-bold">总览</h2>
     </div>
     <div
-      v-if="!summary.pending && summary.summary"
+      v-if="
+        !summary.pending &&
+        summary.summary &&
+        summary.allSummarys &&
+        summary.allSummarys.length === accounts.length
+      "
       class="mt-4 grid grid-cols-4 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-8 *:bg-gradient-to-t"
     >
       <UCard :ui="cardUI">
@@ -164,7 +169,12 @@ const selectedFilter = computed({
       </div>
     </div>
     <div
-      v-if="!dailyPending && daily"
+      v-if="
+        !dailyPending &&
+        daily &&
+        dailyStore.allDaily &&
+        dailyStore.allDaily.length === accounts.length
+      "
       class="mt-4 grid grid-cols-3 max-sm:grid-cols-1 max-lg:grid-cols-2 gap-8 *:bg-gradient-to-t"
     >
       <UCard :ui="cardUI">

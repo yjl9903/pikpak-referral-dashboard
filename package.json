@@ -8,7 +8,7 @@
     "cloudflare:build": "nuxt build --preset=cloudflare_pages",
     "cloudflare:deploy": "wrangler --cwd dist/ pages deploy",
     "dev": "nuxt dev",
-    "format": "prettier --write ./**/*.{vue,ts}",
+    "format": "prettier --write './**/*.{vue,ts}'",
     "generate": "nuxt generate",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
