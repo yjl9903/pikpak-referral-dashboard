@@ -67,7 +67,7 @@ importers:
         specifier: ^1.2.2
         version: 1.2.2
       '@iconify-json/lucide':
-        specifier: ^1.2.55
+        specifier: ^1.2.56
         version: 1.2.56
       bumpp:
         specifier: latest
