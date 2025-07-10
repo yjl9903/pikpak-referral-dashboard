@@ -42,7 +42,7 @@
     "shadcn-vue": "^2.2.0",
     "wrangler": "^4.24.0"
   },
-  "packageManager": "pnpm@10.12.4",
+  "packageManager": "pnpm@10.13.1",
   "engines": {
     "node": ">=v20.10.0"
   }
