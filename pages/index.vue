@@ -3,6 +3,7 @@ import type { SelectItem } from '@nuxt/ui';
 
 import { usePikPakComissionsSummary, usePikPakComissionsDaily } from '~/stores/comissions';
 import { useCurrencyStore } from '~/stores/currency';
+import { usePikPakRedemptions } from '~/stores/redemptions';
 
 const cardUI = {
   root: 'shadow-xs',
@@ -18,6 +19,9 @@ await exchange.init();
 
 const dailyStore = usePikPakComissionsDaily();
 const { daily, dailySummary, range, pending: dailyPending } = storeToRefs(dailyStore);
+
+const redemptionsStore = usePikPakRedemptions();
+const { currentRedemptions, pending: redemptionsPending } = storeToRefs(redemptionsStore);
 
 const rangeFilters = computed(() => {
   const filters = dailyStore.filters;
@@ -246,6 +250,15 @@ const selectedFilter = computed({
       <h2 class="text-xl font-bold">完整数据</h2>
     </div>
     <DailyTable class="mt-4" :loading="dailyPending" :daily="daily"></DailyTable>
+
+    <div class="mt-6">
+      <h2 class="text-xl font-bold">提现记录</h2>
+    </div>
+    <RedemptionsTable
+      class="mt-4"
+      :loading="redemptionsPending"
+      :redemptions="currentRedemptions"
+    ></RedemptionsTable>
   </div>
   <div v-else>
     <div class="mt-12 flex justify-center">

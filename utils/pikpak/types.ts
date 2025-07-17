@@ -117,3 +117,34 @@ export interface PikPakUserInfo {
   /** 密码最后更新时间 */
   password_updated_at: string;
 }
+
+/**
+ * 提现订单状态
+ */
+export type RedemptionStatus = 'PENDING' | 'ERROR' | 'SUCCEED';
+
+/**
+ * 提现记录明细
+ */
+export interface Redemption {
+  /** 提现具体时间，格式RFC3339：2023-01-01T01:01:01+08:00 */
+  time: string;
+  /** 提现金额 (SGD) */
+  amount: number;
+  /** 收款方式 */
+  method: string;
+  /** 收款账号 */
+  account: string;
+  /** 收款订单状态 */
+  status: RedemptionStatus;
+  /** 收款订单ID */
+  id: string;
+}
+
+/**
+ * 获取提现记录 API 返回结构
+ */
+export interface RedemptionsResponse {
+  /** 提现记录明细数组 */
+  redemptions: Redemption[];
+}

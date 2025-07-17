@@ -30,7 +30,12 @@ const data = computed(() => {
 const columns: TableColumn<DailyCommissionStats>[] = [
   {
     accessorKey: 'day',
-    header: '日期'
+    header: '日期',
+    meta: {
+      class: {
+        td: 'w-[120px]'
+      }
+    }
   },
   {
     accessorKey: 'new_users',

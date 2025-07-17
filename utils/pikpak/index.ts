@@ -2,6 +2,7 @@ import type {
   DailyCommissionStats,
   InvitedRewardSummary,
   PikPakUserInfo,
+  Redemption,
   RevenueSummary
 } from './types';
 
@@ -266,6 +267,6 @@ export class PikPakClient {
   async getRedemptions(options?: PikPakFetchOptions) {
     const url = new URL('promoting/v1/redemptions', this.options.host?.api ?? API_HOST);
     const resp = await this.request(url, { ...options });
-    return resp;
+    return resp.redemptions as Redemption[];
   }
 }
