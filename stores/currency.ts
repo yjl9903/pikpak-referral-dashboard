@@ -128,6 +128,7 @@ export const useCurrencyStore = defineStore('CurrencyStore', () => {
 
   return {
     // 状态
+    state: skipHydrate(state),
     exchangeRates: skipHydrate(toRef(state, 'exchangeRates')),
     lastUpdated: skipHydrate(toRef(state, 'lastUpdated')),
     loading: skipHydrate(toRef(state, 'loading')),

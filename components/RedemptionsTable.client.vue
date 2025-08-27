@@ -13,17 +13,20 @@ const props = withDefaults(
 const exchange = useCurrencyStore();
 
 const data = computed(() => {
-  // const new_users = (props.daily ?? []).reduce((acc, cur) => acc + cur.new_users, 0);
-  // const paid_users = (props.daily ?? []).reduce((acc, cur) => acc + cur.paid_users, 0);
-  // const paid_amount = (props.daily ?? []).reduce((acc, cur) => acc + cur.paid_amount, 0);
-  // const paid_amount_commission = (props.daily ?? []).reduce(
-  //   (acc, cur) => acc + cur.paid_amount_commission,
-  //   0
-  // );
+  const total_amount = (props.redemptions ?? [])
+    .filter((r) => r.status === 'SUCCEED')
+    .reduce((acc, cur) => acc + cur.amount, 0);
 
   return [
-    ...[...(props.redemptions ?? [])].reverse()
-    // { day: '总计', new_users, paid_users, paid_amount, paid_amount_commission }
+    ...[...(props.redemptions ?? [])].reverse(),
+    <Redemption>{
+      time: '总计',
+      id: '$total',
+      method: '',
+      account: '',
+      amount: total_amount,
+      status: 'SUCCEED'
+    }
   ];
 });
 
@@ -55,14 +58,20 @@ const columns: TableColumn<Redemption>[] = [
 <template>
   <UTable v-if="!loading && redemptions" :data="data" :columns="columns">
     <template #time-cell="{ row }">
-      <span>{{ new Date(row.original.time).toLocaleDateString('sv-SE') }}</span>
+      <span v-if="row.original.id !== '$total'">{{
+        new Date(row.original.time).toLocaleDateString('sv-SE')
+      }}</span>
+      <span v-else class="font-bold">总计</span>
     </template>
     <template #amount-cell="{ row }">
-      <span>{{ exchange.formatAmount(row.original.amount) }}</span>
-      <span>&nbsp;{{ exchange.currentCurrency.code }}</span>
+      <span :class="{ 'font-bold': row.original.id === '$total' }">
+        <span>{{ exchange.formatAmount(row.original.amount) }}</span>
+        <span>&nbsp;{{ exchange.currentCurrency.code }}</span>
+      </span>
     </template>
     <template #status-cell="{ row }">
-      <span v-if="row.original.status === 'SUCCEED'">
+      <span v-if="row.original.id === '$total'"> </span>
+      <span v-else-if="row.original.status === 'SUCCEED'">
         <span class="text-green-500">成功</span>
       </span>
       <span v-else-if="row.original.status === 'PENDING'">

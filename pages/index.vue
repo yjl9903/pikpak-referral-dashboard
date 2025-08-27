@@ -10,6 +10,9 @@ const cardUI = {
   body: '!px-4 !py-3 space-y-1'
 };
 
+const currencyStore = useCurrencyStore();
+const { state: currencyState, supportedCurrencies } = storeToRefs(currencyStore);
+
 const { accounts, currentAccounts } = storeToRefs(usePikPakAccounts());
 
 const summary = usePikPakComissionsSummary();
@@ -160,14 +163,21 @@ const selectedFilter = computed({
       <USkeleton class="h-[112px] max-lg:h-[256px] w-full" />
     </div>
 
-    <div class="mt-12 flex items-center gap-8 max-sm:justify-between">
-      <h2 class="text-2xl font-bold shrink-0">收益情况</h2>
-      <div>
+    <div class="mt-12 flex items-center gap-8 max-sm:flex-col max-sm:items-start max-sm:gap-2">
+      <h2 class="text-2xl font-bold shrink-0">最近收益</h2>
+      <div class="flex items-center gap-2">
         <USelect
           v-if="!dailyPending && daily"
           v-model="selectedFilter"
           :items="rangeFilters"
-          class="w-48 max-sm:w-32"
+          class="w-48 max-sm:w-40"
+          :ui="{ content: 'max-h-100' }"
+        />
+        <USelect
+          v-if="!dailyPending && daily"
+          v-model="currencyState.currentCurrency"
+          :items="supportedCurrencies"
+          class="w-48 max-sm:w-40"
           :ui="{ content: 'max-h-100' }"
         />
       </div>
