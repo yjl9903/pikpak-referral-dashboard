@@ -14,6 +14,13 @@ export interface PikPakAccount {
   deviceId: string;
 }
 
+function getAPIHost() {
+  return {
+    api: `${location.protocol}//${location.host}/api/`,
+    user: `${location.protocol}//${location.host}/api/`
+  };
+}
+
 function loadCache(): PikPakClient[] {
   const cache = !import.meta.env.SSR
     ? JSON.parse(window.localStorage.getItem('pikpak_accounts') ?? 'null')
@@ -24,10 +31,7 @@ function loadCache(): PikPakClient[] {
         new PikPakClient({
           account: c.account,
           token: c,
-          host: {
-            api: `${location.protocol}//${location.host}/api/`,
-            user: `${location.protocol}//${location.host}/api/`
-          }
+          host: getAPIHost()
         })
     );
   } else {
@@ -49,30 +53,53 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
   const accounts = shallowRef<PikPakClient[]>(init);
   const currentAccounts = shallowRef<PikPakClient[]>([...accounts.value]);
 
-  init.forEach((client) => {
-    client.options.onRefreshToken = () => {
-      accounts.value = accounts.value.filter((ac) => ac.token);
-      setCache(accounts.value);
-    };
-  });
-
-  !import.meta.env.SSR &&
-    watch(accounts, (accounts) => {
-      setCache(accounts);
-    });
-
   const isCurrentAccount = ref<boolean[]>(
     accounts.value.map((ac) => currentAccounts.value.some((t) => t.account === ac.account))
   );
 
-  watch(
-    () => accounts.value,
-    (newValue) => {
-      isCurrentAccount.value = newValue.map((ac) =>
-        currentAccounts.value.some((t) => t.account === ac.account)
-      );
-    }
-  );
+  if (!import.meta.env.SSR) {
+    const search = new URLSearchParams(location.search);
+    const accessToken = search.getAll('access_token');
+    console.log(accessToken);
+    Promise.all(accessToken.map((ac) => PikPakClient.create(ac, { host: getAPIHost() }))).then(
+      (clients) => {
+        accounts.value = [...clients, ...accounts.value];
+        currentAccounts.value = [...clients, ...currentAccounts.value];
+      }
+    );
+
+    // @ts-ignore
+    window.$getShareURL = () => {
+      const search = new URLSearchParams();
+      accounts.value.forEach((client) => {
+        if (client.accessToken) {
+          search.append('access_token', client.accessToken);
+        }
+      });
+      return `${location.origin}?${search.toString()}`;
+    };
+  }
+
+  !import.meta.env.SSR &&
+    watch(
+      () => accounts.value,
+      (newValue) => {
+        setCache(accounts.value);
+
+        newValue.forEach((client) => {
+          client.options.onRefreshToken = () => {
+            accounts.value = accounts.value.filter((ac) => ac.token);
+          };
+        });
+
+        isCurrentAccount.value = newValue.map((ac) =>
+          currentAccounts.value.some((t) => t.account === ac.account)
+        );
+      },
+      {
+        immediate: true
+      }
+    );
 
   return {
     accounts: skipHydrate(accounts),
@@ -96,10 +123,7 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
       const client = new PikPakClient({
         account,
         password,
-        host: {
-          api: `${location.protocol}//${location.host}/api/`,
-          user: `${location.protocol}//${location.host}/api/`
-        }
+        host: getAPIHost()
       });
 
       const resp = await client.login();

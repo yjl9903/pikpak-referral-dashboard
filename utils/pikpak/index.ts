@@ -23,6 +23,8 @@ export interface PikPakClientInit {
 
   deviceId?: string;
 
+  accessToken?: string;
+
   token?: PikPakToken;
 }
 
@@ -57,7 +59,7 @@ export interface PikPakFetchOptions {
 }
 
 export class PikPakClient {
-  public readonly account: string;
+  public account: string;
 
   private readonly password: string | undefined;
 
@@ -65,16 +67,31 @@ export class PikPakClient {
 
   public readonly options: PikPakClientOptions;
 
+  public accessToken: string | undefined;
+
   public token: PikPakToken | undefined;
 
-  private refreshTokenPromise: Promise<PikPakToken> | undefined;
+  private refreshTokenPromise: Promise<string> | undefined;
 
   public constructor(init: PikPakClientInit & PikPakClientOptions) {
     this.account = init.account;
     this.password = init.password;
     this.deviceId = init.token?.deviceId ?? init.deviceId ?? crypto.randomUUID();
     this.token = init.token;
+    this.accessToken = init.accessToken || init.token?.accessToken;
     this.options = { host: init.host };
+  }
+
+  public static async create(accessToken: string, options?: PikPakClientOptions) {
+    const client = new PikPakClient({
+      account: '',
+      accessToken,
+      ...options
+    });
+    const info = await client.getUserInfo();
+    client.account = info.email;
+    console.log(client, info);
+    return client;
   }
 
   private async request<T = any>(url: string | URL, init: RequestInit): Promise<T> {
@@ -83,7 +100,7 @@ export class PikPakClient {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'X-Device-Id': this.deviceId,
-        ...(this.token ? { Authorization: `Bearer ${this.token.accessToken}` } : {}),
+        ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
         ...(init.headers ?? {})
       }
     });
@@ -145,14 +162,6 @@ export class PikPakClient {
     }
   }
 
-  async checkAccessToken(options?: PikPakFetchOptions) {
-    if (!this.token) return undefined;
-    if (new Date().getTime() / 1000 > this.token.expires - 60 * 30) {
-      return await this.refreshToken(options);
-    }
-    return this.token;
-  }
-
   async refreshToken(options?: PikPakFetchOptions) {
     if (!this.token) throw new Error('没有 Token');
 
@@ -193,15 +202,17 @@ export class PikPakClient {
           deviceId: this.deviceId,
           expires: Math.floor(new Date().getTime() / 1000) + resp.expires_in
         };
+        this.accessToken = resp.access_token;
         this.refreshTokenPromise = undefined;
 
         try {
           this.options?.onRefreshToken?.();
         } catch {}
 
-        resolve(this.token);
+        resolve(resp.access_token);
       } catch (error) {
         this.token = undefined;
+        this.accessToken = undefined;
         this.refreshTokenPromise = undefined;
 
         try {
