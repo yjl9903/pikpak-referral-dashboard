@@ -67,6 +67,8 @@ export class PikPakClient {
 
   public token: PikPakToken | undefined;
 
+  private refreshTokenPromise: Promise<PikPakToken> | undefined;
+
   public constructor(init: PikPakClientInit & PikPakClientOptions) {
     this.account = init.account;
     this.password = init.password;
@@ -154,51 +156,63 @@ export class PikPakClient {
   async refreshToken(options?: PikPakFetchOptions) {
     if (!this.token) throw new Error('没有 Token');
 
-    const url = new URL('v1/auth/token', this.options.host?.user ?? USER_HOST);
-
-    try {
-      const body = {
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        grant_type: 'refresh_token',
-        refresh_token: this.token.refreshToken
-      };
-
-      const resp: {
-        token_type: 'Bearer';
-        access_token: string;
-        refresh_token: string;
-        expires_in: number;
-        sub: string;
-      } = await this.request(url, {
-        ...options,
-        method: 'POST',
-        body: JSON.stringify(body)
-      });
-
-      this.token = {
-        sub: resp.sub,
-        account: this.account,
-        accessToken: resp.access_token,
-        refreshToken: resp.refresh_token,
-        deviceId: this.deviceId,
-        expires: Math.floor(new Date().getTime() / 1000) + resp.expires_in
-      };
-
-      try {
-        this.options?.onRefreshToken?.();
-      } catch {}
-
-      return this.token;
-    } catch (error) {
-      this.token = undefined;
-
-      try {
-        this.options?.onRefreshToken?.();
-      } catch {}
-
-      throw error;
+    if (this.refreshTokenPromise) {
+      return await this.refreshTokenPromise;
     }
+
+    const token = this.token;
+
+    this.refreshTokenPromise = new Promise(async (resolve, reject) => {
+      const url = new URL('v1/auth/token', this.options.host?.user ?? USER_HOST);
+
+      try {
+        const body = {
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          grant_type: 'refresh_token',
+          refresh_token: token.refreshToken
+        };
+
+        const resp: {
+          token_type: 'Bearer';
+          access_token: string;
+          refresh_token: string;
+          expires_in: number;
+          sub: string;
+        } = await this.request(url, {
+          ...options,
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+
+        this.token = {
+          sub: resp.sub,
+          account: this.account,
+          accessToken: resp.access_token,
+          refreshToken: resp.refresh_token,
+          deviceId: this.deviceId,
+          expires: Math.floor(new Date().getTime() / 1000) + resp.expires_in
+        };
+        this.refreshTokenPromise = undefined;
+
+        try {
+          this.options?.onRefreshToken?.();
+        } catch {}
+
+        resolve(this.token);
+      } catch (error) {
+        this.token = undefined;
+        this.refreshTokenPromise = undefined;
+
+        try {
+          this.options?.onRefreshToken?.();
+        } catch {}
+
+        reject(error);
+      }
+    });
+
+    return await this.refreshTokenPromise;
   }
 
   async getCaptchaToken(options?: PikPakFetchOptions) {
