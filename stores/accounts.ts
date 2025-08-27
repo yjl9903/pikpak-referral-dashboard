@@ -60,7 +60,6 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
   if (!import.meta.env.SSR) {
     const search = new URLSearchParams(location.search);
     const accessToken = search.getAll('access_token');
-    console.log(accessToken);
     Promise.all(accessToken.map((ac) => PikPakClient.create(ac, { host: getAPIHost() }))).then(
       (clients) => {
         accounts.value = [...clients, ...accounts.value];

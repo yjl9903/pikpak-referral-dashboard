@@ -90,7 +90,6 @@ export class PikPakClient {
     });
     const info = await client.getUserInfo();
     client.account = info.email;
-    console.log(client, info);
     return client;
   }
 
