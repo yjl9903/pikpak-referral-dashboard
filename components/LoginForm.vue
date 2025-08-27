@@ -10,8 +10,8 @@ const toast = useToast();
 const emit = defineEmits<{ submitted: [] }>();
 
 const schema = z.object({
-  account: z.string(),
-  password: z.string().min(6, 'Must be at least 6 characters')
+  account: z.string({ message: '请输入账户' }).min(1, '请输入账户'),
+  password: z.string({ message: '请输入密码' }).min(6, '密码至少 6 位')
 });
 
 type Schema = z.output<typeof schema>;
