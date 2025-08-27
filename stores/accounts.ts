@@ -74,17 +74,6 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
     } else {
       loading.value = false;
     }
-
-    // @ts-ignore
-    window.$getShareURL = () => {
-      const search = new URLSearchParams();
-      accounts.value.forEach((client) => {
-        if (client.accessToken) {
-          search.append('access_token', client.accessToken);
-        }
-      });
-      return `${location.origin}?${search.toString()}`;
-    };
   }
 
   !import.meta.env.SSR &&
