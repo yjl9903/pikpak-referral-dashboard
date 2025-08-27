@@ -49,6 +49,8 @@ function setCache(accounts: PikPakClient[]) {
 }
 
 export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
+  const loading = ref(true);
+
   const init = loadCache();
   const accounts = shallowRef<PikPakClient[]>(init);
   const currentAccounts = shallowRef<PikPakClient[]>([...accounts.value]);
@@ -60,12 +62,18 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
   if (!import.meta.env.SSR) {
     const search = new URLSearchParams(location.search);
     const accessToken = search.getAll('access_token');
-    Promise.all(accessToken.map((ac) => PikPakClient.create(ac, { host: getAPIHost() }))).then(
-      (clients) => {
-        accounts.value = [...clients, ...accounts.value];
-        currentAccounts.value = [...clients, ...currentAccounts.value];
-      }
-    );
+
+    if (accessToken.length > 0) {
+      Promise.all(accessToken.map((ac) => PikPakClient.create(ac, { host: getAPIHost() }))).then(
+        (clients) => {
+          accounts.value = [...clients, ...accounts.value];
+          currentAccounts.value = [...clients, ...currentAccounts.value];
+          loading.value = false;
+        }
+      );
+    } else {
+      loading.value = false;
+    }
 
     // @ts-ignore
     window.$getShareURL = () => {
@@ -101,6 +109,7 @@ export const usePikPakAccounts = defineStore('PikpakAccountsStore', () => {
     );
 
   return {
+    loading: skipHydrate(loading),
     accounts: skipHydrate(accounts),
     currentAccounts: skipHydrate(currentAccounts),
     isCurrentAccount: skipHydrate(isCurrentAccount),

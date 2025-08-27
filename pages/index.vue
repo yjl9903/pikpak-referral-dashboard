@@ -13,7 +13,7 @@ const cardUI = {
 const currencyStore = useCurrencyStore();
 const { state: currencyState, supportedCurrencies } = storeToRefs(currencyStore);
 
-const { accounts, currentAccounts } = storeToRefs(usePikPakAccounts());
+const { loading: initLoading, accounts, currentAccounts } = storeToRefs(usePikPakAccounts());
 
 const summary = usePikPakComissionsSummary();
 const exchange = useCurrencyStore();
@@ -270,7 +270,7 @@ const selectedFilter = computed({
       :redemptions="currentRedemptions"
     ></RedemptionsTable>
   </div>
-  <div v-else>
+  <div v-else-if="!initLoading">
     <div class="mt-12 flex justify-center">
       <div class="w-[400px]">
         <div class="text-2xl font-bold mb-4">登录 PikPak 账号</div>
