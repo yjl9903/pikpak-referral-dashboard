@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui';
-
 import { usePikPakComissionsSummary, usePikPakComissionsDaily } from '~/stores/comissions';
 import { useCurrencyStore } from '~/stores/currency';
 import { usePikPakRedemptions } from '~/stores/redemptions';
@@ -26,63 +24,73 @@ const { daily, dailySummary, range, pending: dailyPending } = storeToRefs(dailyS
 const redemptionsStore = usePikPakRedemptions();
 const { currentRedemptions, pending: redemptionsPending } = storeToRefs(redemptionsStore);
 
-const rangeFilters = computed(() => {
+type RangeFilterOption = {
+  label: string;
+  range: [string, string];
+};
+
+const rangeFilterOptions = computed<RangeFilterOption[]>(() => {
   const filters = dailyStore.filters;
   return [
     {
       label: '本周',
-      value: filters.thisWeek.join(',')
+      range: filters.thisWeek
     },
     {
       label: '最近 7 天',
-      value: filters.last7Days.join(',')
-    },
-    {
-      type: 'separator'
+      range: filters.last7Days
     },
     {
       label: '本月',
-      value: filters.thisMonth.join(',')
+      range: filters.thisMonth
     },
     {
       label: '最近 30 天',
-      value: filters.last30Days.join(',')
+      range: filters.last30Days
     },
     {
       label: '最近 90 天',
-      value: filters.last90Days.join(',')
-    },
-    {
-      type: 'separator'
+      range: filters.last90Days
     },
     {
       label: '今年',
-      value: filters.thisYear.join(',')
+      range: filters.thisYear
     },
     {
       label: '最近 6 个月',
-      value: filters.last6Months.join(',')
+      range: filters.last6Months
     },
     {
       label: '最近 12 个月',
-      value: filters.last12Months.join(',')
-    },
-    {
-      type: 'separator'
-    },
-    {
-      label: '自定义',
-      value: '_'
+      range: filters.last12Months
     }
-  ] satisfies SelectItem[];
+  ];
 });
 
-const selectedFilter = computed({
+const rangeFilters = computed(() => {
+  return rangeFilterOptions.value.map((item) => item.label);
+});
+
+const selectedRangeLabel = computed(() => {
+  const currentValue = range.value.join(',');
+  const matchedFilter = rangeFilterOptions.value.find(
+    (item) => item.range.join(',') === currentValue
+  );
+
+  if (matchedFilter) return matchedFilter.label;
+
+  const [from, to] = range.value;
+  return `${from} 至 ${to}`;
+});
+
+const selectedFilter = computed<string>({
   get() {
-    return range.value.join(',');
+    return selectedRangeLabel.value;
   },
   set(newValue) {
-    range.value = newValue.split(',') as [string, string];
+    const matchedFilter = rangeFilterOptions.value.find((item) => item.label === newValue);
+    if (!matchedFilter) return;
+    range.value = matchedFilter.range;
   }
 });
 </script>
@@ -193,7 +201,7 @@ const selectedFilter = computed({
     >
       <UCard :ui="cardUI">
         <div>
-          <span class="text-muted-foreground text-sm">最近 30 天收益</span>
+          <span class="text-muted-foreground text-sm">{{ selectedRangeLabel }}收益</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ exchange.formatAmount(dailySummary.paid_amount_commission) }}</span>
@@ -206,7 +214,7 @@ const selectedFilter = computed({
 
       <UCard :ui="cardUI">
         <div>
-          <span class="text-muted-foreground text-sm">最近 30 天付费用户</span>
+          <span class="text-muted-foreground text-sm">{{ selectedRangeLabel }}付费用户</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ dailySummary.paid_users }}</span>
@@ -215,7 +223,7 @@ const selectedFilter = computed({
 
       <UCard :ui="cardUI">
         <div>
-          <span class="text-muted-foreground text-sm">最近 30 天新用户</span>
+          <span class="text-muted-foreground text-sm">{{ selectedRangeLabel }}新用户</span>
         </div>
         <div class="text-2xl font-semibold tabular-nums">
           <span>{{ dailySummary.new_users }}</span>

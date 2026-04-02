@@ -63,6 +63,12 @@ const columns: TableColumn<Redemption>[] = [
       }}</span>
       <span v-else class="font-bold">总计</span>
     </template>
+    <template #account-cell="{ row }">
+      <span v-if="row.original.id !== '$total'">{{
+        row.original.account || row.original.method
+      }}</span>
+      <span v-else class="font-bold"></span>
+    </template>
     <template #amount-cell="{ row }">
       <span :class="{ 'font-bold': row.original.id === '$total' }">
         <span>{{ exchange.formatAmount(row.original.amount) }}</span>
