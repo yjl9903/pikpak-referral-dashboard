@@ -35,8 +35,8 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@iconify-json/heroicons": "1.2.2",
-    "@iconify-json/lucide": "1.2.56",
+    "@iconify-json/heroicons": "1.2.3",
+    "@iconify-json/lucide": "1.2.101",
     "@iconify-json/mdi": "1.2.3",
     "bumpp": "latest",
     "prettier": "3.6.2",
