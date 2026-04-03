@@ -32,19 +32,19 @@
     "typescript": "5.8.3",
     "vue": "3.5.17",
     "vue-router": "4.5.1",
-    "vue-tsc": "3.2.6",
     "zod": "3.25.67"
   },
   "devDependencies": {
-    "@iconify-json/heroicons": "^1.2.2",
-    "@iconify-json/lucide": "^1.2.56",
-    "@iconify-json/mdi": "^1.2.3",
+    "@iconify-json/heroicons": "1.2.2",
+    "@iconify-json/lucide": "1.2.56",
+    "@iconify-json/mdi": "1.2.3",
     "bumpp": "latest",
-    "prettier": "^3.6.2",
-    "shadcn-vue": "^2.2.0",
-    "wrangler": "^4.24.0"
+    "prettier": "3.6.2",
+    "shadcn-vue": "2.2.0",
+    "vue-tsc": "3.2.6",
+    "wrangler": "4.24.0"
   },
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.33.0",
   "engines": {
     "node": ">=v20.10.0"
   }
